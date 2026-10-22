@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Service Squad — Sign In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #F5F1E8;
+      --card: #FFFDF8;
+      --ink: #1C1A16;
+      --mute: #7D766A;
+      --red: #E2502B;
+      --green: #2F7D5B;
+      --rule: #DCD5C5;
+      --display: "Bricolage Grotesque", system-ui, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--display);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .wordmark {
+      font-family: var(--display);
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 36px;
+      text-align: center;
+    }
+    .wordmark span { color: var(--red); }
+
+    .card {
+      background: var(--card);
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 var(--ink);
+      width: 100%;
+      max-width: 420px;
+      padding: 36px 32px;
+    }
+
+    .tab-row {
+      display: flex;
+      border-bottom: 2px solid var(--rule);
+      margin-bottom: 28px;
+      gap: 0;
+    }
+    .tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      font-family: var(--display);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--mute);
+      padding: 10px 0 12px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .tab-btn.active {
+      color: var(--ink);
+      border-bottom-color: var(--red);
+    }
+    .tab-btn:focus-visible {
+      outline: 2px solid var(--red);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] {
+      width: 100%;
+      padding: 11px 14px;
+      border: 2px solid var(--rule);
+      border-radius: 8px;
+      background: var(--paper);
+      font-family: var(--display);
+      font-size: 15px;
+      color: var(--ink);
+      transition: border-color 0.15s;
+      outline: none;
+    }
+    input:focus {
+      border-color: var(--ink);
+    }
+    input::placeholder { color: var(--mute); }
+
+    .btn-primary {
+      width: 100%;
+      padding: 13px;
+      background: var(--ink);
+      color: var(--card);
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      font-family: var(--display);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.12s, color 0.12s;
+      box-shadow: 3px 3px 0 var(--mute);
+    }
+    .btn-primary:hover {
+      background: var(--red);
+      border-color: var(--red);
+      box-shadow: 3px 3px 0 #8B2E13;
+    }
+    .btn-primary:focus-visible {
+      outline: 2px solid var(--red);
+      outline-offset: 3px;
+    }
+    .btn-primary:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .msg {
+      font-size: 13px;
+      border-radius: 7px;
+      padding: 10px 14px;
+      margin-top: 14px;
+      font-family: var(--mono);
+      display: none;
+    }
+    .msg.error {
+      background: #FEF0EB;
+      border: 1.5px solid var(--red);
+      color: var(--red);
+      display: block;
+    }
+    .msg.success {
+      background: #EAF4EF;
+      border: 1.5px solid var(--green);
+      color: var(--green);
+      display: block;
+    }
+
+    .reset-link {
+      display: block;
+      text-align: right;
+      font-size: 12px;
+      color: var(--mute);
+      text-decoration: none;
+      margin-top: 8px;
+      font-family: var(--mono);
+    }
+    .reset-link:hover { color: var(--ink); text-decoration: underline; }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .divider {
+      border: none;
+      border-top: 1.5px solid var(--rule);
+      margin: 24px 0 0;
+    }
+    .footer-note {
+      text-align: center;
+      font-size: 12px;
+      color: var(--mute);
+      margin-top: 16px;
+      font-family: var(--mono);
+    }
+  </style>
+</head>
+<body>
+  <div class="wordmark">Service <span>Squad</span></div>
+
+  <div class="card" role="main">
+    <div class="tab-row" role="tablist" aria-label="Sign in or Sign up">
+      <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-signin" id="tab-signin" onclick="switchTab('signin')">Sign in</button>
+      <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-signup" id="tab-signup" onclick="switchTab('signup')">Create account</button>
+    </div>
+
+    <!-- SIGN IN -->
+    <div id="panel-signin" class="panel active" role="tabpanel" aria-labelledby="tab-signin">
+      <div class="form-group">
+        <label for="signin-email">Email</label>
+        <input type="email" id="signin-email" placeholder="you@example.com" autocomplete="email" />
+      </div>
+      <div class="form-group">
+        <label for="signin-password">Password</label>
+        <input type="password" id="signin-password" placeholder="••••••••" autocomplete="current-password" />
+        <a class="reset-link" href="#" id="reset-link">Forgot password?</a>
+      </div>
+      <button class="btn-primary" id="signin-btn" onclick="handleSignIn()">Sign in</button>
+      <div class="msg" id="signin-msg" role="alert" aria-live="polite"></div>
+    </div>
+
+    <!-- SIGN UP -->
+    <div id="panel-signup" class="panel" role="tabpanel" aria-labelledby="tab-signup">
+      <div class="form-group">
+        <label for="signup-email">Email</label>
+        <input type="email" id="signup-email" placeholder="you@example.com" autocomplete="email" />
+      </div>
+      <div class="form-group">
+        <label for="signup-password">Password</label>
+        <input type="password" id="signup-password" placeholder="8+ characters" autocomplete="new-password" />
+      </div>
+      <div class="form-group">
+        <label for="signup-confirm">Confirm password</label>
+        <input type="password" id="signup-confirm" placeholder="Repeat password" autocomplete="new-password" />
+      </div>
+      <button class="btn-primary" id="signup-btn" onclick="handleSignUp()">Create account</button>
+      <div class="msg" id="signup-msg" role="alert" aria-live="polite"></div>
+    </div>
+
+    <hr class="divider" />
+    <p class="footer-note">Track community service hours & find local events.</p>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+    // ── Replace with your project values ────────────────────────────
+    const SUPABASE_URL = 'https://cuuuleswhgvxnslunbzy.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_OUztN-2qz4ByvTlcj3UAmQ_SsphYdvz';
+    // ────────────────────────────────────────────────────────────────
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Expose helpers to global scope so onclick attrs work
+    window.switchTab = switchTab;
+    window.handleSignIn = handleSignIn;
+    window.handleSignUp = handleSignUp;
+
+    // Auto-redirect if already logged in and verified
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user?.email_confirmed_at) {
+        window.location.href = 'index.html';
+      }
+    })();
+
+    function switchTab(tab) {
+      document.getElementById('panel-signin').classList.toggle('active', tab === 'signin');
+      document.getElementById('panel-signup').classList.toggle('active', tab === 'signup');
+      document.getElementById('tab-signin').classList.toggle('active', tab === 'signin');
+      document.getElementById('tab-signin').setAttribute('aria-selected', tab === 'signin');
+      document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+      document.getElementById('tab-signup').setAttribute('aria-selected', tab === 'signup');
+      clearMsg('signin-msg');
+      clearMsg('signup-msg');
+    }
+
+    function showMsg(id, text, type) {
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.className = 'msg ' + type;
+    }
+
+    function clearMsg(id) {
+      const el = document.getElementById(id);
+      el.className = 'msg';
+      el.textContent = '';
+    }
+
+    function setLoading(btnId, loading) {
+      document.getElementById(btnId).disabled = loading;
+      document.getElementById(btnId).textContent = loading
+        ? 'Working…'
+        : (btnId === 'signin-btn' ? 'Sign in' : 'Create account');
+    }
+
+    async function handleSignIn() {
+      const email = document.getElementById('signin-email').value.trim();
+      const password = document.getElementById('signin-password').value;
+      clearMsg('signin-msg');
+
+      if (!email || !password) {
+        showMsg('signin-msg', 'Please enter your email and password.', 'error');
+        return;
+      }
+
+      setLoading('signin-btn', true);
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      setLoading('signin-btn', false);
+
+      if (error) {
+        showMsg('signin-msg', error.message, 'error');
+        return;
+      }
+
+      if (!data.user?.email_confirmed_at) {
+        window.location.href = 'verify.html';
+        return;
+      }
+
+      window.location.href = 'index.html';
+    }
+
+    async function handleSignUp() {
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const confirm = document.getElementById('signup-confirm').value;
+      clearMsg('signup-msg');
+
+      if (!email || !password || !confirm) {
+        showMsg('signup-msg', 'All fields are required.', 'error');
+        return;
+      }
+      if (password !== confirm) {
+        showMsg('signup-msg', 'Passwords do not match.', 'error');
+        return;
+      }
+      if (password.length < 8) {
+        showMsg('signup-msg', 'Password must be at least 8 characters.', 'error');
+        return;
+      }
+
+      setLoading('signup-btn', true);
+      const { error } = await supabase.auth.signUp({ email, password });
+      setLoading('signup-btn', false);
+
+      if (error) {
+        showMsg('signup-msg', error.message, 'error');
+        return;
+      }
+
+      window.location.href = 'verify.html';
+    }
+
+    // Password reset
+    document.getElementById('reset-link').addEventListener('click', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('signin-email').value.trim();
+      if (!email) {
+        showMsg('signin-msg', 'Enter your email above, then click Forgot password.', 'error');
+        return;
+      }
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/login.html'
+      });
+      if (error) {
+        showMsg('signin-msg', error.message, 'error');
+      } else {
+        showMsg('signin-msg', 'Reset link sent — check your inbox.', 'success');
+      }
+    });
+  </script>
+</body>
+</html>

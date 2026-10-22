@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Service Squad — Verify Email</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #F5F1E8;
+      --card: #FFFDF8;
+      --ink: #1C1A16;
+      --mute: #7D766A;
+      --red: #E2502B;
+      --green: #2F7D5B;
+      --rule: #DCD5C5;
+      --display: "Bricolage Grotesque", system-ui, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--display);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .wordmark {
+      font-family: var(--display);
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 36px;
+      text-align: center;
+    }
+    .wordmark span { color: var(--red); }
+
+    .card {
+      background: var(--card);
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 var(--ink);
+      width: 100%;
+      max-width: 420px;
+      padding: 40px 32px;
+      text-align: center;
+    }
+
+    .envelope-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 24px;
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 3px 3px 0 var(--rule);
+    }
+    .envelope-icon svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    h1 {
+      font-family: var(--display);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--mute);
+      line-height: 1.6;
+      margin-bottom: 32px;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .subtitle strong {
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 13px;
+      background: var(--ink);
+      color: var(--card);
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      font-family: var(--display);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+      box-shadow: 3px 3px 0 var(--mute);
+      margin-bottom: 12px;
+    }
+    .btn-primary:hover {
+      background: var(--green);
+      border-color: var(--green);
+      box-shadow: 3px 3px 0 #1B4D36;
+    }
+    .btn-primary:focus-visible {
+      outline: 2px solid var(--red);
+      outline-offset: 3px;
+    }
+    .btn-primary:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .btn-ghost {
+      width: 100%;
+      padding: 11px;
+      background: transparent;
+      color: var(--mute);
+      border: 2px solid var(--rule);
+      border-radius: 8px;
+      font-family: var(--display);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.12s, border-color 0.12s;
+    }
+    .btn-ghost:hover {
+      color: var(--ink);
+      border-color: var(--ink);
+    }
+    .btn-ghost:focus-visible {
+      outline: 2px solid var(--red);
+      outline-offset: 3px;
+    }
+
+    .msg {
+      font-size: 13px;
+      border-radius: 7px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      font-family: var(--mono);
+      display: none;
+      text-align: left;
+    }
+    .msg.error {
+      background: #FEF0EB;
+      border: 1.5px solid var(--red);
+      color: var(--red);
+      display: block;
+    }
+    .msg.success {
+      background: #EAF4EF;
+      border: 1.5px solid var(--green);
+      color: var(--green);
+      display: block;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1.5px solid var(--rule);
+      margin: 24px 0 20px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--mute);
+      text-decoration: none;
+      font-family: var(--mono);
+      transition: color 0.12s;
+    }
+    .back-link:hover { color: var(--ink); }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 5px 12px;
+      border-radius: 100px;
+      border: 1.5px solid var(--rule);
+      color: var(--mute);
+      margin-bottom: 28px;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--rule);
+    }
+    .dot.pending { background: #D9A736; }
+    .dot.verified { background: var(--green); }
+  </style>
+</head>
+<body>
+  <div class="wordmark">Service <span>Squad</span></div>
+
+  <div class="card" role="main">
+    <div class="envelope-icon" aria-hidden="true">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="7" width="26" height="18" rx="3" stroke="#1C1A16" stroke-width="2"/>
+        <path d="M3 10L16 19L29 10" stroke="#1C1A16" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <div class="status-badge" id="status-badge">
+      <span class="dot pending" id="status-dot"></span>
+      <span id="status-text">Waiting for verification</span>
+    </div>
+
+    <h1>Check your email</h1>
+    <p class="subtitle">We sent a verification link to <strong id="user-email">your inbox</strong>. Open it to activate your account.</p>
+
+    <div class="msg" id="check-msg" role="alert" aria-live="polite"></div>
+
+    <button class="btn-primary" id="check-btn" onclick="checkVerification()">I've verified — continue</button>
+    <button class="btn-ghost" id="resend-btn" onclick="resendEmail()">Resend verification email</button>
+
+    <hr class="divider" />
+
+    <a class="back-link" href="login.html">← Back to sign in</a>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+    const SUPABASE_URL = 'https://cuuuleswhgvxnslunbzy.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_OUztN-2qz4ByvTlcj3UAmQ_SsphYdvz';
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    window.checkVerification = checkVerification;
+    window.resendEmail = resendEmail;
+
+    // Try to display the user's email from the current session
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user?.email) {
+        document.getElementById('user-email').textContent = session.user.email;
+      }
+      // If already verified, go straight to dashboard
+      if (session?.user?.email_confirmed_at) {
+        window.location.href = 'index.html';
+      }
+    })();
+
+    function showMsg(text, type) {
+      const el = document.getElementById('check-msg');
+      el.textContent = text;
+      el.className = 'msg ' + type;
+    }
+
+    function setStatus(state) {
+      const dot = document.getElementById('status-dot');
+      const text = document.getElementById('status-text');
+      if (state === 'verified') {
+        dot.className = 'dot verified';
+        text.textContent = 'Email verified!';
+      } else {
+        dot.className = 'dot pending';
+        text.textContent = 'Waiting for verification';
+      }
+    }
+
+    async function checkVerification() {
+      const btn = document.getElementById('check-btn');
+      btn.disabled = true;
+      btn.textContent = 'Checking…';
+      showMsg('', '');
+
+      // Force a session refresh to pick up the latest verification status
+      const { data, error } = await supabase.auth.refreshSession();
+
+      btn.disabled = false;
+      btn.textContent = 'I\'ve verified — continue';
+
+      if (error) {
+        showMsg('Session expired. Please sign in again.', 'error');
+        setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+        return;
+      }
+
+      if (data.session?.user?.email_confirmed_at) {
+        setStatus('verified');
+        showMsg('Verified! Taking you to your dashboard…', 'success');
+        setTimeout(() => { window.location.href = 'index.html'; }, 1000);
+      } else {
+        showMsg('Not verified yet. Check your inbox and click the link.', 'error');
+      }
+    }
+
+    let resendCooldown = false;
+    async function resendEmail() {
+      if (resendCooldown) {
+        showMsg('Wait 60 seconds before requesting another email.', 'error');
+        return;
+      }
+
+      const { data: { session } } = await supabase.auth.getSession();
+      const email = session?.user?.email;
+      if (!email) {
+        showMsg('No session found. Please sign in again.', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('resend-btn');
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+
+      const { error } = await supabase.auth.resend({ type: 'signup', email });
+
+      if (error) {
+        showMsg(error.message, 'error');
+        btn.disabled = false;
+        btn.textContent = 'Resend verification email';
+        return;
+      }
+
+      showMsg('Email resent — check your inbox (and spam folder).', 'success');
+      resendCooldown = true;
+      let seconds = 60;
+      const interval = setInterval(() => {
+        seconds--;
+        btn.textContent = `Resend again in ${seconds}s`;
+        if (seconds <= 0) {
+          clearInterval(interval);
+          resendCooldown = false;
+          btn.disabled = false;
+          btn.textContent = 'Resend verification email';
+        }
+      }, 1000);
+    }
+  </script>
+</body>
+</html>

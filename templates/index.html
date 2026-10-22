@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Service Squad — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #F5F1E8;
+      --card: #FFFDF8;
+      --ink: #1C1A16;
+      --mute: #7D766A;
+      --red: #E2502B;
+      --green: #2F7D5B;
+      --rule: #DCD5C5;
+      --display: "Bricolage Grotesque", system-ui, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--display);
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+
+    /* ── NAV ────────────────────────────────── */
+    nav {
+      background: var(--card);
+      border-bottom: 2px solid var(--ink);
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .nav-brand {
+      font-family: var(--display);
+      font-size: 20px;
+      font-weight: 700;
+      text-decoration: none;
+      color: var(--ink);
+      letter-spacing: -0.3px;
+    }
+    .nav-brand span { color: var(--red); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .nav-link {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--mute);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: color 0.12s, background 0.12s;
+    }
+    .nav-link:hover, .nav-link.active { color: var(--ink); background: var(--paper); }
+    .nav-link.active { font-weight: 600; }
+
+    /* ── LAYOUT ─────────────────────────────── */
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 36px 24px 0;
+    }
+
+    .page-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 700px) {
+      .page-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── SECTION CARDS ──────────────────────── */
+    .section-card {
+      background: var(--card);
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 var(--ink);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--mute);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1.5px solid var(--rule);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* ── PROGRESS BAR ───────────────────────── */
+    .hours-display {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .hours-big {
+      font-family: var(--mono);
+      font-size: 48px;
+      font-weight: 500;
+      line-height: 1;
+      color: var(--ink);
+    }
+    .hours-of {
+      font-family: var(--mono);
+      font-size: 16px;
+      color: var(--mute);
+    }
+
+    .progress-track {
+      height: 16px;
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: 100px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--green);
+      border-radius: 100px;
+      width: 0%;
+      transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--mute);
+    }
+
+    /* ── LOG HOURS FORM ─────────────────────── */
+    .log-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .hours-input-wrap {
+      position: relative;
+      flex: 1;
+    }
+    .hours-input-wrap input {
+      width: 100%;
+      padding: 11px 46px 11px 14px;
+      border: 2px solid var(--rule);
+      border-radius: 8px;
+      background: var(--paper);
+      font-family: var(--mono);
+      font-size: 16px;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .hours-input-wrap input:focus { border-color: var(--ink); }
+    .hours-input-wrap input::placeholder { color: var(--mute); font-size: 14px; font-family: var(--display); }
+    .hours-unit {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--mute);
+      pointer-events: none;
+    }
+
+    .btn-log {
+      padding: 11px 22px;
+      background: var(--ink);
+      color: var(--card);
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      font-family: var(--display);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 3px 3px 0 var(--mute);
+      transition: background 0.12s, color 0.12s;
+    }
+    .btn-log:hover { background: var(--green); border-color: var(--green); box-shadow: 3px 3px 0 #1B4D36; }
+    .btn-log:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+    .btn-log:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .log-msg {
+      font-size: 13px;
+      border-radius: 7px;
+      padding: 9px 14px;
+      margin-top: 12px;
+      font-family: var(--mono);
+      display: none;
+    }
+    .log-msg.error { background: #FEF0EB; border: 1.5px solid var(--red); color: var(--red); display: block; }
+    .log-msg.success { background: #EAF4EF; border: 1.5px solid var(--green); color: var(--green); display: block; }
+
+    /* ── EVENTS ─────────────────────────────── */
+    .events-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .event-card {
+      background: var(--paper);
+      border: 1.5px solid var(--rule);
+      border-radius: 10px;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color 0.12s, box-shadow 0.12s;
+    }
+    .event-card:hover {
+      border-color: var(--ink);
+      box-shadow: 2px 2px 0 var(--rule);
+    }
+
+    .event-title {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .event-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .event-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--mute);
+      background: var(--card);
+      border: 1.5px solid var(--rule);
+      border-radius: 100px;
+      padding: 3px 10px;
+    }
+
+    .event-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .event-date {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--mute);
+    }
+    .btn-attend {
+      padding: 7px 16px;
+      background: var(--card);
+      color: var(--ink);
+      border: 2px solid var(--ink);
+      border-radius: 6px;
+      font-family: var(--display);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+    }
+    .btn-attend:hover { background: var(--ink); color: var(--card); }
+    .btn-attend:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+    .btn-attend:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-attend.attending {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+
+    /* ── SKELETON ────────────────────────────── */
+    .skeleton {
+      background: var(--rule);
+      border-radius: 6px;
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .skeleton-card {
+      height: 100px;
+      border-radius: 10px;
+    }
+
+    /* ── EMPTY / ERROR STATES ───────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--mute);
+    }
+    .empty-state p {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .error-state {
+      background: #FEF0EB;
+      border: 1.5px solid var(--red);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--red);
+    }
+
+    /* ── SIDEBAR ─────────────────────────────── */
+    .sidebar-card {
+      background: var(--card);
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 var(--ink);
+      padding: 22px 22px 20px;
+      margin-bottom: 20px;
+    }
+    .sidebar-title {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--mute);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1.5px solid var(--rule);
+    }
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .stat-box {
+      background: var(--paper);
+      border: 1.5px solid var(--rule);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+    .stat-box-num {
+      font-family: var(--mono);
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--ink);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-box-lbl {
+      font-size: 12px;
+      color: var(--mute);
+    }
+
+    /* ── PAYWALL MODAL ──────────────────────── */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(28, 26, 22, 0.6);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      background: var(--card);
+      border: 2px solid var(--ink);
+      border-radius: 16px;
+      box-shadow: 6px 6px 0 var(--ink);
+      max-width: 440px;
+      width: 100%;
+      padding: 36px 32px 32px;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 32px;
+      height: 32px;
+      background: var(--paper);
+      border: 1.5px solid var(--rule);
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: var(--mute);
+      transition: color 0.1s, border-color 0.1s;
+      line-height: 1;
+    }
+    .modal-close:hover { color: var(--ink); border-color: var(--ink); }
+    .modal-close:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+    .modal-icon {
+      width: 56px;
+      height: 56px;
+      background: #FEF0EB;
+      border: 2px solid var(--red);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-headline {
+      font-family: var(--display);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin-bottom: 10px;
+      line-height: 1.25;
+    }
+    .modal-headline span { color: var(--red); }
+
+    .modal-body {
+      font-size: 14px;
+      color: var(--mute);
+      line-height: 1.65;
+      margin-bottom: 28px;
+    }
+    .modal-body strong { color: var(--ink); }
+
+    .modal-perks {
+      list-style: none;
+      margin-bottom: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .modal-perks li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+    }
+    .perk-check {
+      width: 20px;
+      height: 20px;
+      background: var(--green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .perk-check svg { width: 10px; height: 10px; }
+
+    .btn-modal-upgrade {
+      width: 100%;
+      padding: 14px;
+      background: var(--red);
+      color: #fff;
+      border: 2px solid var(--red);
+      border-radius: 8px;
+      font-family: var(--display);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.12s;
+      box-shadow: 4px 4px 0 #8B2E13;
+      margin-bottom: 10px;
+    }
+    .btn-modal-upgrade:hover { background: #C43E1E; border-color: #C43E1E; }
+    .btn-modal-upgrade:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+    .btn-modal-upgrade:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .modal-dismiss {
+      width: 100%;
+      padding: 10px;
+      background: transparent;
+      color: var(--mute);
+      border: none;
+      font-family: var(--display);
+      font-size: 13px;
+      cursor: pointer;
+      transition: color 0.12s;
+    }
+    .modal-dismiss:hover { color: var(--ink); }
+
+    .modal-error {
+      background: #FEF0EB;
+      border: 1.5px solid var(--red);
+      border-radius: 7px;
+      padding: 10px 14px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--red);
+      margin-top: 12px;
+      display: none;
+    }
+    .modal-error.show { display: block; }
+  </style>
+</head>
+<body>
+  <!-- ── NAVIGATION ────────────────────────────── -->
+  <nav>
+    <a class="nav-brand" href="index.html">Service <span>Squad</span></a>
+    <div class="nav-links">
+      <a class="nav-link active" href="index.html">Dashboard</a>
+      <a class="nav-link" href="settings.html">Settings</a>
+    </div>
+  </nav>
+
+  <!-- ── MAIN CONTENT ──────────────────────────── -->
+  <div class="page" role="main">
+    <div class="page-grid">
+
+      <!-- LEFT COLUMN -->
+      <div class="left-col">
+
+        <!-- PROGRESS CARD -->
+        <div class="section-card">
+          <div class="section-label">
+            <span>100-Hour Goal</span>
+            <span id="pct-label" style="font-size:12px;">—%</span>
+          </div>
+          <div class="hours-display">
+            <span class="hours-big" id="hours-display">—</span>
+            <span class="hours-of">/ 100 hrs</span>
+          </div>
+          <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="100-hour progress">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <div class="progress-meta">
+            <span>0 hrs</span>
+            <span>100 hrs</span>
+          </div>
+        </div>
+
+        <!-- LOG HOURS CARD -->
+        <div class="section-card">
+          <div class="section-label">Log hours</div>
+          <div class="log-row">
+            <div class="hours-input-wrap">
+              <input
+                type="number"
+                id="hours-input"
+                min="0.25"
+                max="24"
+                step="0.25"
+                placeholder="How many hours?"
+                aria-label="Hours to log"
+              />
+              <span class="hours-unit" aria-hidden="true">hrs</span>
+            </div>
+            <button class="btn-log" id="log-btn" onclick="logHours()">Log hours</button>
+          </div>
+          <div class="log-msg" id="log-msg" role="alert" aria-live="polite"></div>
+        </div>
+
+        <!-- EVENTS CARD -->
+        <div class="section-card">
+          <div class="section-label">
+            <span>Volunteer events near you</span>
+            <button
+              onclick="loadEvents()"
+              style="background:none;border:none;font-family:var(--mono);font-size:11px;color:var(--mute);cursor:pointer;padding:0;"
+              aria-label="Refresh events"
+            >Refresh</button>
+          </div>
+          <div class="events-list" id="events-list" aria-live="polite" aria-label="Volunteer events">
+            <!-- Skeletons while loading -->
+            <div class="skeleton skeleton-card" aria-hidden="true"></div>
+            <div class="skeleton skeleton-card" aria-hidden="true"></div>
+            <div class="skeleton skeleton-card" aria-hidden="true"></div>
+          </div>
+        </div>
+
+      </div><!-- /left-col -->
+
+      <!-- RIGHT COLUMN (SIDEBAR) -->
+      <aside class="right-col">
+        <div class="sidebar-card">
+          <div class="sidebar-title">Your stats</div>
+          <div class="stat-grid">
+            <div class="stat-box">
+              <div class="stat-box-num" id="stat-hours">—</div>
+              <div class="stat-box-lbl">Hours logged</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box-num" id="stat-remaining">—</div>
+              <div class="stat-box-lbl">Hours to goal</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-card" id="plan-card">
+          <div class="sidebar-title">Your plan</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <span style="font-size:15px;font-weight:600;" id="sidebar-plan-name">—</span>
+            <span style="font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:100px;border:1.5px solid var(--rule);color:var(--mute);" id="sidebar-plan-badge">—</span>
+          </div>
+          <div style="font-size:13px;color:var(--mute);margin-bottom:16px;" id="sidebar-plan-desc">—</div>
+          <button
+            class="btn-log"
+            id="sidebar-upgrade-btn"
+            onclick="handleUpgrade()"
+            style="width:100%;background:var(--red);border-color:var(--red);box-shadow:3px 3px 0 #8B2E13;display:none;"
+          >Upgrade to Pro</button>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <!-- ── PAYWALL MODAL ─────────────────────────── -->
+  <div
+    class="modal-backdrop"
+    id="paywall-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-headline"
+    aria-describedby="modal-description"
+  >
+    <div class="modal" id="paywall-modal">
+      <button class="modal-close" onclick="closePaywall()" aria-label="Close">×</button>
+
+      <div class="modal-icon" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <path d="M14 4L4 10V18L14 24L24 18V10L14 4Z" stroke="#E2502B" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M14 11V14" stroke="#E2502B" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="14" cy="17.5" r="1" fill="#E2502B"/>
+        </svg>
+      </div>
+
+      <h2 class="modal-headline" id="modal-headline">You reached your <span>20 Free Hours!</span></h2>
+      <p class="modal-body" id="modal-description">
+        Unlock <strong>Unlimited Hour Tracking</strong> &amp; <strong>Counselor PDF Exports</strong> for $4.99/mo.
+      </p>
+
+      <ul class="modal-perks" aria-label="Pro benefits">
+        <li>
+          <span class="perk-check" aria-hidden="true">
+            <svg viewBox="0 0 10 10" fill="none"><path d="M2 5L4.5 7.5L8 3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          Track unlimited service hours
+        </li>
+        <li>
+          <span class="perk-check" aria-hidden="true">
+            <svg viewBox="0 0 10 10" fill="none"><path d="M2 5L4.5 7.5L8 3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          Export PDF reports for counselors
+        </li>
+        <li>
+          <span class="perk-check" aria-hidden="true">
+            <svg viewBox="0 0 10 10" fill="none"><path d="M2 5L4.5 7.5L8 3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          Priority event notifications
+        </li>
+      </ul>
+
+      <button class="btn-modal-upgrade" id="modal-upgrade-btn" onclick="upgradeFromModal()">
+        Upgrade to Pro — $4.99/mo
+      </button>
+      <button class="modal-dismiss" onclick="closePaywall()">Maybe later</button>
+      <div class="modal-error" id="modal-error" role="alert"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+    const SUPABASE_URL = 'https://cuuuleswhgvxnslunbzy.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_OUztN-2qz4ByvTlcj3UAmQ_SsphYdvz';
+    const API = 'http://127.0.0.1:5000';
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    window.logHours = logHours;
+    window.handleUpgrade = handleUpgrade;
+    window.upgradeFromModal = upgradeFromModal;
+    window.openPaywall = openPaywall;
+    window.closePaywall = closePaywall;
+    window.loadEvents = loadEvents;
+
+    let currentSession = null;
+    let loggedHours = 0;
+
+    // ── AUTH GATE ────────────────────────────────
+    async function init() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session || !session.user?.email_confirmed_at) {
+        window.location.href = 'login.html';
+        return;
+      }
+      currentSession = session;
+      await Promise.all([loadProfile(), loadEvents()]);
+    }
+
+    async function getToken() {
+      const { data: { session } } = await supabase.auth.getSession();
+      currentSession = session;
+      return session?.access_token;
+    }
+
+    // ── PROFILE / HOURS ─────────────────────────
+    async function loadProfile() {
+      const token = await getToken();
+      if (!token) return;
+
+      try {
+        const res = await fetch(`${API}/api/settings`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({})
+        });
+
+        if (res.status === 401) {
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const data = await res.json();
+        if (data.ok && data.profile) {
+          const hours = data.profile.logged_hours ?? 0;
+          loggedHours = hours;
+          updateHoursUI(hours);
+          updatePlanUI(data.profile.plan_type || 'free', hours);
+        }
+      } catch (err) {
+        console.error('Failed to load profile:', err);
+      }
+    }
+
+    function updateHoursUI(hours) {
+      const pct = Math.min((hours / 100) * 100, 100);
+      document.getElementById('hours-display').textContent = hours;
+      document.getElementById('stat-hours').textContent = hours;
+      document.getElementById('stat-remaining').textContent = Math.max(100 - hours, 0);
+      document.getElementById('pct-label').textContent = `${Math.round(pct)}%`;
+
+      const fill = document.getElementById('progress-fill');
+      fill.style.width = pct + '%';
+      fill.closest('[role="progressbar"]').setAttribute('aria-valuenow', Math.round(pct));
+    }
+
+    function updatePlanUI(planType, hours) {
+      const isPro = planType === 'pro';
+      const nameEl = document.getElementById('sidebar-plan-name');
+      const badgeEl = document.getElementById('sidebar-plan-badge');
+      const descEl = document.getElementById('sidebar-plan-desc');
+      const upgradeBtn = document.getElementById('sidebar-upgrade-btn');
+
+      if (isPro) {
+        nameEl.textContent = 'Pro';
+        badgeEl.textContent = 'Active';
+        badgeEl.style.cssText = 'font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:100px;border:1.5px solid var(--green);color:var(--green);background:#EAF4EF;';
+        descEl.textContent = 'Unlimited hours & PDF exports.';
+        upgradeBtn.style.display = 'none';
+      } else {
+        nameEl.textContent = 'Free';
+        badgeEl.textContent = 'Free';
+        descEl.textContent = `${hours} of 20 free hours used.`;
+        upgradeBtn.style.display = 'block';
+      }
+    }
+
+    // ── LOG HOURS ────────────────────────────────
+    async function logHours() {
+      const input = document.getElementById('hours-input');
+      const msg = document.getElementById('log-msg');
+      const btn = document.getElementById('log-btn');
+      const hoursVal = parseFloat(input.value);
+
+      msg.className = 'log-msg';
+
+      if (!input.value || isNaN(hoursVal) || hoursVal <= 0) {
+        msg.textContent = 'Enter a number of hours (e.g. 2.5).';
+        msg.className = 'log-msg error';
+        input.focus();
+        return;
+      }
+      if (hoursVal > 24) {
+        msg.textContent = 'Cannot log more than 24 hours at once.';
+        msg.className = 'log-msg error';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Logging…';
+
+      const token = await getToken();
+      if (!token) { window.location.href = 'login.html'; return; }
+
+      try {
+        const res = await fetch(`${API}/api/log-hours`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ hours: hoursVal })
+        });
+
+        const data = await res.json();
+
+        // CRITICAL: Paywall check — HTTP 403 + PaywallTriggered
+        if (res.status === 403 && data.error === 'PaywallTriggered') {
+          btn.disabled = false;
+          btn.textContent = 'Log hours';
+          openPaywall();
+          return;
+        }
+
+        if (!res.ok) {
+          msg.textContent = data.message || data.error || 'Failed to log hours.';
+          msg.className = 'log-msg error';
+          btn.disabled = false;
+          btn.textContent = 'Log hours';
+          return;
+        }
+
+        // Success
+        const newTotal = data.logged_hours;
+        loggedHours = newTotal;
+        updateHoursUI(newTotal);
+        input.value = '';
+        msg.textContent = `${hoursVal} hours logged. Total: ${newTotal} hrs.`;
+        msg.className = 'log-msg success';
+
+        // Auto-clear success message
+        setTimeout(() => { if (msg.className.includes('success')) msg.className = 'log-msg'; }, 4000);
+      } catch (err) {
+        msg.textContent = 'Network error — check your connection.';
+        msg.className = 'log-msg error';
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Log hours';
+    }
+
+    // ── EVENTS ───────────────────────────────────
+    async function loadEvents() {
+      const container = document.getElementById('events-list');
+
+      // Show skeletons
+      container.innerHTML = `
+        <div class="skeleton skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton skeleton-card" aria-hidden="true"></div>
+      `;
+
+      const token = await getToken();
+      if (!token) return;
+
+      try {
+        const res = await fetch(`${API}/api/events`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.status === 401) {
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          const errorMap = {
+            DatabaseError: 'Unable to load events right now. The database is unavailable.',
+            ScraperError: 'Event feed is temporarily unavailable. Try again in a few minutes.',
+            EmailNotVerified: 'Please verify your email to view events.'
+          };
+          container.innerHTML = `<div class="error-state">${errorMap[data.error] || data.message || 'Failed to load events.'}</div>`;
+          return;
+        }
+
+        const events = data.events || [];
+
+        if (events.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <p>No events near you right now.<br />Update your location in <a href="settings.html" style="color:var(--ink);font-weight:600;">Settings</a> to see more.</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = '';
+        events.forEach(ev => {
+          container.appendChild(buildEventCard(ev));
+        });
+
+      } catch (err) {
+        container.innerHTML = `<div class="error-state">Network error — check your connection and try again.</div>`;
+      }
+    }
+
+    function buildEventCard(ev) {
+      const card = document.createElement('div');
+      card.className = 'event-card';
+      card.dataset.hash = ev.event_hash;
+
+      card.innerHTML = `
+        <div class="event-title">${escHtml(ev.title)}</div>
+        <div class="event-meta">
+          <span class="event-tag">${escHtml(ev.city || 'Nearby')}</span>
+          <span class="event-tag">${escHtml(ev.location || 'See link')}</span>
+        </div>
+        <div class="event-footer">
+          <span class="event-date">${escHtml(ev.date || 'Date TBD')}</span>
+          <button
+            class="btn-attend"
+            aria-label="Mark attendance for ${escHtml(ev.title)}"
+            onclick="attendEvent(this, '${escHtml(ev.event_hash)}', '${escHtml(ev.link || '')}')"
+          >Attend</button>
+        </div>
+      `;
+
+      return card;
+    }
+
+    // ── ATTEND ───────────────────────────────────
+    window.attendEvent = async function(btn, eventHash, eventLink) {
+      if (btn.classList.contains('attending')) {
+        // Already attending — open the link
+        if (eventLink) window.open(eventLink, '_blank', 'noopener,noreferrer');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Adding…';
+
+      const token = await getToken();
+      if (!token) { window.location.href = 'login.html'; return; }
+
+      try {
+        const res = await fetch(`${API}/api/attend`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ event_hash: eventHash })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          btn.disabled = false;
+          btn.textContent = 'Attend';
+          // Surface error briefly in button text
+          btn.textContent = data.error === 'EventNotFound' ? 'Not found' : 'Error';
+          setTimeout(() => { btn.textContent = 'Attend'; }, 2500);
+          return;
+        }
+
+        btn.classList.add('attending');
+        btn.textContent = 'Attending ✓';
+        btn.disabled = false;
+        btn.setAttribute('aria-label', btn.getAttribute('aria-label').replace('Mark attendance', 'Open event link'));
+
+        // Open Google Calendar URL
+        if (data.calendar_url) {
+          window.open(data.calendar_url, '_blank', 'noopener,noreferrer');
+        }
+
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Attend';
+      }
+    };
+
+    // ── PAYWALL MODAL ────────────────────────────
+    let lastFocusedBeforeModal = null;
+    const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+    function openPaywall() {
+      lastFocusedBeforeModal = document.activeElement;
+      const backdrop = document.getElementById('paywall-backdrop');
+      backdrop.classList.add('open');
+      document.body.style.overflow = 'hidden';
+
+      // Focus the upgrade button
+      setTimeout(() => {
+        document.getElementById('modal-upgrade-btn').focus();
+      }, 50);
+
+      // Focus trap
+      backdrop.addEventListener('keydown', trapFocus);
+    }
+
+    function closePaywall() {
+      const backdrop = document.getElementById('paywall-backdrop');
+      backdrop.classList.remove('open');
+      document.body.style.overflow = '';
+      backdrop.removeEventListener('keydown', trapFocus);
+      const errEl = document.getElementById('modal-error');
+      errEl.textContent = '';
+      errEl.className = 'modal-error';
+      document.getElementById('modal-upgrade-btn').disabled = false;
+      document.getElementById('modal-upgrade-btn').textContent = 'Upgrade to Pro — $4.99/mo';
+      if (lastFocusedBeforeModal) lastFocusedBeforeModal.focus();
+    }
+
+    function trapFocus(e) {
+      if (e.key === 'Escape') { closePaywall(); return; }
+      if (e.key !== 'Tab') return;
+
+      const modal = document.getElementById('paywall-modal');
+      const focusable = [...modal.querySelectorAll(FOCUSABLE)].filter(el => !el.disabled);
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    }
+
+    // Close on backdrop click
+    document.getElementById('paywall-backdrop').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closePaywall();
+    });
+
+    async function upgradeFromModal() {
+      const btn = document.getElementById('modal-upgrade-btn');
+      const errEl = document.getElementById('modal-error');
+      btn.disabled = true;
+      btn.textContent = 'Redirecting…';
+      errEl.className = 'modal-error';
+
+      const token = await getToken();
+      if (!token) { window.location.href = 'login.html'; return; }
+
+      try {
+        const res = await fetch(`${API}/api/create-checkout-session`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({})
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.url) {
+          errEl.textContent = data.message || data.error || 'Could not start checkout. Try again.';
+          errEl.className = 'modal-error show';
+          btn.disabled = false;
+          btn.textContent = 'Upgrade to Pro — $4.99/mo';
+          return;
+        }
+
+        window.location.href = data.url;
+      } catch (err) {
+        errEl.textContent = 'Network error — check your connection.';
+        errEl.className = 'modal-error show';
+        btn.disabled = false;
+        btn.textContent = 'Upgrade to Pro — $4.99/mo';
+      }
+    }
+
+    // Sidebar upgrade button
+    async function handleUpgrade() {
+      const token = await getToken();
+      if (!token) { window.location.href = 'login.html'; return; }
+
+      const btn = document.getElementById('sidebar-upgrade-btn');
+      btn.disabled = true;
+      btn.textContent = 'Redirecting…';
+
+      try {
+        const res = await fetch(`${API}/api/create-checkout-session`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({})
+        });
+
+        const data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Upgrade to Pro';
+        }
+      } catch {
+        btn.disabled = false;
+        btn.textContent = 'Upgrade to Pro';
+      }
+    }
+
+    // ── HELPERS ──────────────────────────────────
+    function escHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Enter key on hours input
+    document.getElementById('hours-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') logHours();
+    });
+
+    // ── BOOT ─────────────────────────────────────
+    init();
+  </script>
+</body>
+</html>
