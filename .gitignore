@@ -12,3 +12,4 @@ build/
 .DS_Store
 serve_ui.py
 ui.log
+*.bak
