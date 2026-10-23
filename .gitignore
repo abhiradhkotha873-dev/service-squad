@@ -1,6 +1,14 @@
 .env
-.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.DS_Store
 serve_ui.py
 ui.log
-__pycache__/
-.venv/
