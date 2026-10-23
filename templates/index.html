@@ -925,11 +925,7 @@
         </div>
         <div class="event-footer">
           <span class="event-date">${escHtml(ev.date || 'Date TBD')}</span>
-          <button
-            class="btn-attend"
-            aria-label="Mark attendance for ${escHtml(ev.title)}"
-            onclick="attendEvent(this, '${escHtml(ev.event_hash)}', '${escHtml(ev.link || '')}')"
-          >Attend</button>
+          <a href="${event.link}" target="_blank" class="btn" style="text-decoration: none; display: inline-block; text-align: center;">Attend</a>
         </div>
       `;
 
