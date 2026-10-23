@@ -527,10 +527,6 @@ def verify_page():
 def settings_page():
     return render_template("settings.html")
 
-@app.route("/health")
-def health():
-    return {"ok": True}, 200
-
 if __name__ == "__main__":
     # Development only. Use Gunicorn in production.
     app.run(host="127.0.0.1", port=int(os.getenv("PORT", "5000")), debug=False)
