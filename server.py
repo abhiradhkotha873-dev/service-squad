@@ -327,6 +327,15 @@ def log_hours():
         return error_response("DatabaseError", "Hours could not be saved. Try again.", 503)
 
 
+@app.get("/api/profile")
+@require_auth
+def get_profile_route():
+    """GET /api/profile — returns the authenticated user's profile."""
+    profile = get_profile(g.user_id)
+    if not profile:
+        return error_response("ProfileUnavailable", "Profile not found.", 404)
+    return jsonify({"ok": True, "profile": profile})
+
 @app.post("/api/settings")
 @require_auth
 def settings():
