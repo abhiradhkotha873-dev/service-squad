@@ -722,14 +722,6 @@
       if (!token) return;
 
       try {
-        const res = await fetch(`${API}/api/settings`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({})
-        });
 
         if (res.status === 401) {
           window.location.href = 'login.html';
