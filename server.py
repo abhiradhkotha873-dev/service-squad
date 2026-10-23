@@ -78,15 +78,16 @@ CORS(app, origins="*")
 db = create_client(
     SUPABASE_URL,
     SUPABASE_SERVICE_ROLE_KEY,
-    options=ClientOptions(auto_refresh_token=False, persist_session=False)
-# Admin client strictly for bypassing RLS
+    options=ClientOptions(auto_refresh_token=False, persist_session=False),
+)
+
+# Admin client: always uses service role key, bypasses RLS
 admin_db = create_client(
     SUPABASE_URL,
     SUPABASE_SERVICE_ROLE_KEY,
-    options=ClientOptions(auto_refresh_token=False, persist_session=False)
+    options=ClientOptions(auto_refresh_token=False, persist_session=False),
 )
-,
-)
+
 auth_client = create_client(
     SUPABASE_URL,
     SUPABASE_ANON_KEY,
@@ -122,13 +123,17 @@ def safe_profile(row: dict) -> dict:
     }
 
 
-def get_profile(user_id: str) -> dict | None:
-    result = db.table("profiles").select(
-        "user_id,username,target_email,logged_hours,city,zip_code,email_verified,"
-        "plan_type,subscription_status,stripe_customer_id,subscription_end"
-    ).eq("user_id", user_id).maybe_single().execute()
-    return result.data if isinstance(result.data, dict) else None
-
+def get_profile(user_id):
+    """Fetch profile via admin_db to bypass RLS. Returns dict or None."""
+    try:
+        res = admin_db.table("profiles").select(
+            "user_id,username,target_email,logged_hours,city,zip_code,email_verified,"
+            "plan_type,subscription_status,stripe_customer_id,subscription_end"
+        ).eq("user_id", user_id).limit(1).execute()
+        return res.data[0] if res.data else None
+    except Exception as e:
+        print(f"[get_profile] failed: {e}")
+        return None
 
 def require_auth(fn):
     """Decorator verifies the bearer JWT with Supabase and requires confirmed email."""
