@@ -78,7 +78,14 @@ CORS(app, origins="*")
 db = create_client(
     SUPABASE_URL,
     SUPABASE_SERVICE_ROLE_KEY,
-    options=ClientOptions(auto_refresh_token=False, persist_session=False),
+    options=ClientOptions(auto_refresh_token=False, persist_session=False)
+# Admin client strictly for bypassing RLS
+admin_db = create_client(
+    SUPABASE_URL,
+    SUPABASE_SERVICE_ROLE_KEY,
+    options=ClientOptions(auto_refresh_token=False, persist_session=False)
+)
+,
 )
 auth_client = create_client(
     SUPABASE_URL,
